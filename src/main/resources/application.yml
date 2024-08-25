@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost/order_manager
+    username: root
+    password: p@ssAdm7
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+knife4j:
+  enable: true    # 开启 knife4j，无需添加 @EnableKnife4j 注解
+  setting:
+    language: zh_cn   # 中文
+    swagger-model-name: 实体类   # 重命名 SwaggerModel 名称,默认
