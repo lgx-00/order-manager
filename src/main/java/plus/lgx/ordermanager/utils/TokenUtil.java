@@ -45,9 +45,9 @@ public class TokenUtil {
     public static class ConstInitializr {
 
         ConstInitializr(
-                @Value("${fgw.max-inactive-interval:7200}") long maxInactiveInterval,
-                @Value("${fgw.token.store:false}") boolean storeToken,
-                @Value("${fgw.token.store-path:tokens}") String storePath,
+                @Value("${app.token.max-inactive-interval:1800}") long maxInactiveInterval,
+                @Value("${app.token.store:false}") boolean storeToken,
+                @Value("${app.token.store-path:tokens}") String storePath,
                 @Autowired UserService userService
         ) {
             TokenUtil.maxInactiveInterval = maxInactiveInterval * 1000;
@@ -223,8 +223,8 @@ public class TokenUtil {
         }
     }
 
-    public static List<UserModel> getOnlineUsers() {
-        return new ArrayList<>(TOKEN_MAPPER.values());
+    public static Collection<UserModel> getOnlineUsers() {
+        return TOKEN_MAPPER.values();
     }
 
     /**
@@ -307,13 +307,13 @@ public class TokenUtil {
         }
 
         String[] lines = data.split(System.lineSeparator());
-        Map<Token, Integer> tokenMapUserId = new HashMap<>((int) (lines.length / 0.75 + 1));
+        Map<Token, Long> tokenMapUserId = new HashMap<>((int) (lines.length / 0.75 + 1));
         for (String line : lines) {
             String[] s = line.split(",");
             if (s.length != 3) continue;
             String tokenString = s[0];
             long deadTime = Long.parseLong(s[1]);
-            Integer userId = Integer.valueOf(s[2]);
+            Long userId = Long.valueOf(s[2]);
 
             Token token = new Token(tokenString);
             token.deadTime = deadTime;
@@ -321,7 +321,7 @@ public class TokenUtil {
             tokenMapUserId.put(token, userId);
         }
 
-        Map<Integer, UserModel> userIdMapUser = userService.getPerms(new HashSet<>(tokenMapUserId.values()));
+        Map<Long, UserModel> userIdMapUser = userService.getPerms(new HashSet<>(tokenMapUserId.values()));
         tokenMapUserId.forEach((token, userId) -> {
             UserModel userModel = userIdMapUser.get(userId);
             if (Objects.isNull(userModel)) return;

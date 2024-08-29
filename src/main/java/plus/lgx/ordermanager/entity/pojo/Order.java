@@ -60,6 +60,12 @@ public class Order implements Serializable {
     private LocalDateTime orderCreatedAt;
 
     /**
+     * 订单创建时间
+     */
+    @TableField("order_created_by")
+    private Long orderCreatedBy;
+
+    /**
      * 订单附件地址
      */
     @TableField("order_appendix_path")

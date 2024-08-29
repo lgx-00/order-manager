@@ -23,8 +23,8 @@ public class SpringMVCConfig implements WebMvcConfigurer {
     //下面一行是接口访问路径
     private static final List<String> EXCLUDE_PATH = Arrays.asList(
             "/", "css/**", "js/**", "img/**",
-            "json/**", "fonts/**", "/*.html", "/webjars/**", "/swagger-resources/**",
-            "/log/**", "/error", "/summary/exportExcel"
+            "json/**", "fonts/**", "/**/*.html", "/webjars/**", "/swagger-resources/**",
+            "/login", "/error"
     );
 
     @Override

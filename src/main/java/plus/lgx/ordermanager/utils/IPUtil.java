@@ -4,6 +4,9 @@ import cn.hutool.core.net.Ipv4Util;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
+import static plus.lgx.ordermanager.constant.SystemConstant.X_FORWARDED_FOR_HEADER;
+import static plus.lgx.ordermanager.constant.SystemConstant.X_REAL_IP_HEADER;
+
 
 /**
  * Class name: IPUtil
@@ -16,12 +19,12 @@ public class IPUtil {
 
     public static String getIpAddr(HttpServletRequest request) {
 
-        String ip = request.getHeader("X-Real-IP");
+        String ip = request.getHeader(X_REAL_IP_HEADER);
         if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             return ip;
         }
 
-        ip = request.getHeader("X-Forwarded-For");
+        ip = request.getHeader(X_FORWARDED_FOR_HEADER);
         if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个IP值，第一个为真实IP。
             int index = ip.indexOf(',');

@@ -15,3 +15,9 @@ knife4j:
   setting:
     language: zh_cn   # 中文
     swagger-model-name: 实体类   # 重命名 SwaggerModel 名称,默认
+
+app:
+  token:
+    store: true
+    store-path: /Users/lgx/Documents/Projects.localized/2024/java/order-manager/backend/tokens
+    max-inactive-interval: 1800  # 令牌失效时间

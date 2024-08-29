@@ -22,6 +22,8 @@ public class SystemConstant {
 
     public static final String X_REAL_IP_HEADER = "X-Real-IP";
 
+    public static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+
     public static final String DELETE_FAILED = "删除失败";
 
     public static final String UPDATE_FAILED = "更新失败";

@@ -2,6 +2,7 @@ package plus.lgx.ordermanager.controller;
 
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +12,10 @@ import plus.lgx.ordermanager.entity.vo.R;
 import plus.lgx.ordermanager.service.LoginService;
 import plus.lgx.ordermanager.utils.IPUtil;
 import plus.lgx.ordermanager.utils.TokenUtil;
+import plus.lgx.ordermanager.utils.UserHolder;
 
-import static plus.lgx.ordermanager.constant.SystemConstant.*;
+import static plus.lgx.ordermanager.constant.SystemConstant.AUTHORIZATION_HEADER;
+import static plus.lgx.ordermanager.constant.SystemConstant.RESPONSE_MESSAGE_NAME_OR_PASSWD_ERROR;
 
 /**
  * <p>
@@ -31,8 +34,8 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping
-    public R<TokenUtil.Token> login(@RequestHeader(X_REAL_IP_HEADER) String ip, @RequestBody @Valid LoginUserVO user) {
-        user.setIp(IPUtil.toLongIp(ip));
+    public R<TokenUtil.Token> login(HttpServletRequest req, @RequestBody @Valid LoginUserVO user) {
+        user.setIp(IPUtil.toLongIp(IPUtil.getIpAddr(req)));
         try {
             TokenUtil.Token token = loginService.login(user);
             return token != null ? R.ok(token) : R.fail(RESPONSE_MESSAGE_NAME_OR_PASSWD_ERROR);
@@ -45,8 +48,7 @@ public class LoginController {
     // TODO 检验 IP 是否与登录时一致
     @GetMapping("user-info")
     public R<UserModel> getUserInfo(@RequestHeader(AUTHORIZATION_HEADER) String token) {
-        UserModel user = TokenUtil.getUser(token);
-        return user != null ? R.ok(user) : R.unauthorized();
+        return R.ok(UserHolder.getUser());
     }
 
     // TODO 退出登录

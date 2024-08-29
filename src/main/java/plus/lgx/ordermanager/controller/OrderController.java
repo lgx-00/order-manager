@@ -8,6 +8,7 @@ import plus.lgx.ordermanager.entity.vo.OrderVO;
 import plus.lgx.ordermanager.entity.vo.QueryOrderParam;
 import plus.lgx.ordermanager.entity.vo.R;
 import plus.lgx.ordermanager.service.OrderService;
+import plus.lgx.ordermanager.utils.UserHolder;
 
 import static plus.lgx.ordermanager.constant.SystemConstant.DELETE_FAILED;
 import static plus.lgx.ordermanager.constant.SystemConstant.UPDATE_FAILED;
@@ -29,7 +30,7 @@ public class OrderController {
 
     @PostMapping
     public R<Void> postOrder(@RequestBody OrderVO order) {
-        System.out.println(order);
+        order.setOrderCreatedBy(UserHolder.getUser().getUserId());
         orderService.save(order);
         return R.ok();
     }

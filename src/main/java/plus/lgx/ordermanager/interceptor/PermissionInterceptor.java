@@ -54,8 +54,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String url = req.getServletPath();
         RequestMethodEnum method = RequestMethodEnum.valueOf(req.getMethod());
 
-        if (url.equals("/sys/user") && method.equals(RequestMethodEnum.GET)
-                || url.startsWith("/basedata") && method.equals(RequestMethodEnum.GET)) {
+        // 配置放行通道
+        if (
+                url.equals("/login/user-info") && method.equals(RequestMethodEnum.GET)
+        ) {
             log.info("【权限拦截器】离开权限拦截器，请求顺利通过。");
             return true;
         }
