@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
- * 客户
+ * 第三方平台
  * </p>
  *
  * @author lgx
@@ -20,29 +20,23 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@TableName("customer")
-public class Customer implements Serializable {
+@TableName("third_platform")
+public class ThirdPlatform implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 客户编号，主键
+     * 平台编号
      */
-    @TableId(value = "customer_id", type = IdType.AUTO)
-    private Long customerId;
+    @TableId(value = "platform_id", type = IdType.AUTO)
+    private Long platformId;
 
     /**
-     * 用户编号，外键
+     * 平台名称
      */
-    @TableField("user_id")
-    private Long userId;
-
-    /**
-     * 客户来源
-     */
-    @TableField("customer_source")
-    private Long customerSource;
+    @TableField("platform_name")
+    private String platformName;
 
 
 }

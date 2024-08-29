@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 客户 前端控制器
+ * 接单员技术标签 前端控制器
  * </p>
  *
  * @author lgx
  * @since 2024-08-25
  */
 @RestController
-@RequestMapping("/customer")
-public class CustomerController {
+@RequestMapping("/taker-tag")
+public class TakerTagController {
 
 }
 

@@ -1,16 +1,16 @@
 package plus.lgx.ordermanager.service;
 
-import plus.lgx.ordermanager.entity.pojo.Customer;
+import plus.lgx.ordermanager.entity.pojo.TakerTag;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- * 客户 服务类
+ * 接单员技术标签 服务类
  * </p>
  *
  * @author lgx
  * @since 2024-08-25
  */
-public interface CustomerService extends IService<Customer> {
+public interface TakerTagService extends IService<TakerTag> {
 
 }

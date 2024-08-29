@@ -1,16 +1,16 @@
 package plus.lgx.ordermanager.mapper;
 
-import plus.lgx.ordermanager.entity.pojo.Customer;
+import plus.lgx.ordermanager.entity.pojo.TakerTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- * 客户 Mapper 接口
+ * 接单员技术标签 Mapper 接口
  * </p>
  *
  * @author lgx
  * @since 2024-08-25
  */
-public interface CustomerMapper extends BaseMapper<Customer> {
+public interface TakerTagMapper extends BaseMapper<TakerTag> {
 
 }
