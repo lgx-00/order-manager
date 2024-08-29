@@ -1,8 +1,6 @@
 package plus.lgx.ordermanager.utils;
 
 import cn.hutool.extra.spring.SpringUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -24,9 +22,15 @@ import java.util.*;
 public class ToStringUtil {
 
     private static final int maxLength =
-            Integer.parseInt(Optional.ofNullable(SpringUtil.getProperty("fgw.log.max-length")).orElse("200"));
+            Integer.parseInt(Optional.ofNullable(SpringUtil.getProperty("app.log.max-length")).orElse("200"));
 
     private static final Map<Class<?>, Meta> map = new HashMap<>();
+    static {
+        try {
+            map.put(String.class,
+                    new Meta("", new Method[]{String.class.getMethod("toString")}));
+        } catch (NoSuchMethodException ignored) {}
+    }
 
     public static String toString(Object o) {
         if (o == null)
@@ -321,22 +325,14 @@ public class ToStringUtil {
 
     }
 
-    private static class Property {
-        final Method readMethod;
-
-        final Meta meta;
-
-        Property(Method readMethod, Meta meta) {
-            this.readMethod = readMethod;
-            this.meta = meta;
-        }
+    private record Property(Method readMethod, Meta meta) {
 
         @Override
-        public String toString() {
-            char[] charArray = this.readMethod.getName().toCharArray();
-            charArray[3] += 97 - 65;
-            return new String(charArray, 3, charArray.length - 3);
+            public String toString() {
+                char[] charArray = this.readMethod.getName().toCharArray();
+                charArray[3] += 97 - 65;
+                return new String(charArray, 3, charArray.length - 3);
+            }
         }
-    }
 
 }

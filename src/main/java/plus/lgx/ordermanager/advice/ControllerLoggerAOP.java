@@ -19,7 +19,7 @@ import java.time.LocalTime;
 public class ControllerLoggerAOP {
 
     // 环绕通知
-    @Around("execution(* plus.lgx.ordermanager.*.*(..))")
+    @Around("execution(* plus.lgx.ordermanager.controller.*.*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         LocalTime startTime = LocalTime.now();
         if (joinPoint.getArgs().length > 0) {
