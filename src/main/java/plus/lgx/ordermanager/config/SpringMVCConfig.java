@@ -34,8 +34,8 @@ public class SpringMVCConfig implements WebMvcConfigurer {
                 excludePathPatterns(EXCLUDE_PATH).order(0);
 
         // 权限拦截器
-        registry.addInterceptor(new PermissionInterceptor())
-                .excludePathPatterns(EXCLUDE_PATH).order(1);
+//        registry.addInterceptor(new PermissionInterceptor())
+//                .excludePathPatterns(EXCLUDE_PATH).order(1);
     }
 
 }
