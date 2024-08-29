@@ -38,5 +38,10 @@ public class ThirdPlatform implements Serializable {
     @TableField("platform_name")
     private String platformName;
 
+    /**
+     * 状态
+     */
+    @TableField("platform_status")
+    private String platformStatus;
 
 }
