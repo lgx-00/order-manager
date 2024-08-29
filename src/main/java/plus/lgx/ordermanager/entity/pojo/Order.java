@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,11 +19,11 @@ import lombok.Setter;
  * </p>
  *
  * @author lgx
- * @since 2024-08-24
+ * @since 2024-08-25
  */
 @Getter
 @Setter
-@TableName("order")
+@TableName("`order`")
 public class Order implements Serializable {
 
     @Serial
@@ -72,6 +74,7 @@ public class Order implements Serializable {
     /**
      * 订单截止日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @TableField("order_deadline")
     private LocalDateTime orderDeadline;
 
@@ -85,7 +88,7 @@ public class Order implements Serializable {
      * 订单支付方式
      */
     @TableField("order_payment")
-    private String orderPayment;
+    private Long orderPayment;
 
     /**
      * 订单交易额 * 100
@@ -104,6 +107,12 @@ public class Order implements Serializable {
      */
     @TableField("order_status")
     private Integer orderStatus;
+
+    /**
+     * 订单来源
+     */
+    @TableField("order_source")
+    private Long orderSource;
 
 
 }

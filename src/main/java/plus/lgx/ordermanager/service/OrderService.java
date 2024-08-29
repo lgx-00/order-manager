@@ -1,7 +1,10 @@
 package plus.lgx.ordermanager.service;
 
+import com.github.pagehelper.PageInfo;
 import plus.lgx.ordermanager.entity.pojo.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
+import plus.lgx.ordermanager.entity.vo.OrderVO;
+import plus.lgx.ordermanager.entity.vo.QueryOrderParam;
 
 /**
  * <p>
@@ -9,8 +12,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author lgx
- * @since 2024-08-24
+ * @since 2024-08-25
  */
 public interface OrderService extends IService<Order> {
 
+    boolean del(Integer id);
+
+    PageInfo<OrderVO> queryPage(int pageNum, int pageSize, QueryOrderParam param);
 }
