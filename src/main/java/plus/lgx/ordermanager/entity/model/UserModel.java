@@ -1,7 +1,10 @@
 package plus.lgx.ordermanager.entity.model;
 
+import cn.hutool.core.bean.BeanUtil;
 import plus.lgx.ordermanager.entity.pojo.User;
-import plus.lgx.ordermanager.entity.vo.LoginUserVO;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 类型：UserModel
@@ -11,9 +14,13 @@ import plus.lgx.ordermanager.entity.vo.LoginUserVO;
  */
 public class UserModel extends User {
 
-    public UserModel(LoginUserVO user) {
-        this.setUserLoginName(user.getUserName());
-        this.setUserPassword(user.getUserPassword());
+    public UserModel(User user) {
+        BeanUtil.copyProperties(user, this);
+    }
+
+    public Map<String, PermissionModel> getPermission() {
+        // TODO
+        return Collections.emptyMap();
     }
 
 }

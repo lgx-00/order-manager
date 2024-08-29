@@ -39,7 +39,7 @@ public class MybatisPlusGenerator {
                             .controllerBuilder().enableRestStyle().enableHyphenStyle().build();
                     builder.serviceBuilder()
                             .formatServiceFileName("%sService")
-                            .formatServiceImplFileName("%sServiceImp")
+                            .formatServiceImplFileName("%sServiceImpl")
                             .build();
                     //entity的策略配置
                     builder.entityBuilder()

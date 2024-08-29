@@ -4,26 +4,24 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.exc.InputCoercionException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import plus.lgx.ordermanager.entity.vo.R;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 全局异常捕获器
@@ -35,16 +33,19 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     /**
-     *参数校验
-     *规范中的验证异常，嵌套检验问题 不带英文方法 类名
+     * <p>服务器异常</p>
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(value = ConstraintViolationException.class)
-    public R<?> constraintViolationException(ConstraintViolationException e) {
-        log.warn("【全局异常处理】ConstraintViolationException:", e);
-        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-        String message = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("/"));
-        return R.fail(message);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = Exception.class)
+    public R<?> e(Exception e) {
+        log.error("【全局异常处理】发生未处理异常", e);
+        return R.internalServerError();
+    }
+
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public R<?> methodNotAllow() {
+        return R.fail(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
     }
 
     @ResponseBody
@@ -100,12 +101,13 @@ public class GlobalExceptionHandler {
      * spring 封装的参数验证异常， 在controller中没有写BindingResult(实际开发不常用)参数时，会进入
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+    @ExceptionHandler({
+            HandlerMethodValidationException.class,
+            MethodArgumentNotValidException.class,
+            BindException.class
+    })
     public R<?> methodArgumentNotValidException(Exception ex) {
         BindingResult bindingResult = null;
-        if (ex instanceof MethodArgumentNotValidException) {
-            bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
-        }
         if (ex instanceof BindException) {
             bindingResult = ((BindException) ex).getBindingResult();
         }

@@ -9,8 +9,7 @@ import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.List;
 
-import static plus.lgx.ordermanager.constant.SystemConstant.RESPONSE_CODE_FAIL;
-import static plus.lgx.ordermanager.constant.SystemConstant.RESPONSE_CODE_OK;
+import static plus.lgx.ordermanager.constant.SystemConstant.*;
 
 /**
  * 类型：R
@@ -36,9 +35,24 @@ public class R<T> implements Serializable {
     }
 
     private static final R<Void> OK = new R<>(RESPONSE_CODE_OK, null, null);
+    private static final R<Void> INTERNAL_SERVER_ERROR =
+            new R<>(RESPONSE_CODE_FAIL, RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR, null);
+    private static final R<Void> UNAUTHORIZED =
+            new R<>(RESPONSE_CODE_UNAUTHORIZED, RESPONSE_MESSAGE_UNAUTHORIZED, null);
 
-    public static R<?> ok() {
-        return OK;
+    @SuppressWarnings("unchecked")
+    public static <T> R<T> ok() {
+        return (R<T>) OK;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> R<T> internalServerError() {
+        return (R<T>) INTERNAL_SERVER_ERROR;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> R<T> unauthorized() {
+        return (R<T>) UNAUTHORIZED;
     }
 
     public static <T> R<T> ok(T data) {

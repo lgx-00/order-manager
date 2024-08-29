@@ -2,6 +2,8 @@ package plus.lgx.ordermanager.service;
 
 import plus.lgx.ordermanager.entity.pojo.Login;
 import com.baomidou.mybatisplus.extension.service.IService;
+import plus.lgx.ordermanager.entity.vo.LoginUserVO;
+import plus.lgx.ordermanager.utils.TokenUtil;
 
 /**
  * <p>
@@ -13,7 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface LoginService extends IService<Login> {
 
-    Login test();
+    TokenUtil.Token login(LoginUserVO user);
 
 
 }

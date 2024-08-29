@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -22,6 +24,7 @@ import lombok.Setter;
 @TableName("login")
 public class Login implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -40,7 +43,7 @@ public class Login implements Serializable {
      * 登录地址
      */
     @TableField("login_ip")
-    private Integer loginIp;
+    private Long loginIp;
 
     /**
      * 登录时间

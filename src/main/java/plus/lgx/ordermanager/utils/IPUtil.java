@@ -31,7 +31,7 @@ public class IPUtil {
         }
     }
 
-    public static long getLongIp(String ip) {
+    public static long toLongIp(String ip) {
         return Ipv4Util.ipv4ToLong(ip, 0);
     }
 
