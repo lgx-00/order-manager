@@ -7,9 +7,9 @@ import plus.lgx.ordermanager.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -23,9 +23,9 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
-    public Map<Integer, UserModel> getPerms(HashSet<Integer> ids) {
+    public Map<Long, UserModel> getPerms(HashSet<Long> ids) {
         // TODO
-        return Collections.emptyMap();
+        return lambdaQuery().in(User::getUserId, ids).list().stream().collect(Collectors.toMap(User::getUserId, UserModel::new));
     }
 
 }

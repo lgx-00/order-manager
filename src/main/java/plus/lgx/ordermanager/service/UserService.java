@@ -17,5 +17,5 @@ import java.util.Map;
  */
 public interface UserService extends IService<User> {
 
-    Map<Integer, UserModel> getPerms(HashSet<Integer> ids);
+    Map<Long, UserModel> getPerms(HashSet<Long> ids);
 }
