@@ -1,18 +1,28 @@
 package plus.lgx.ordermanager.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import plus.lgx.ordermanager.entity.pojo.Order;
+import plus.lgx.ordermanager.entity.pojo.OrderTag;
+import plus.lgx.ordermanager.entity.pojo.TechTag;
 import plus.lgx.ordermanager.entity.vo.OrderVO;
 import plus.lgx.ordermanager.entity.vo.QueryOrderParam;
 import plus.lgx.ordermanager.mapper.OrderMapper;
 import plus.lgx.ordermanager.service.OrderService;
+import plus.lgx.ordermanager.service.OrderTagService;
+import plus.lgx.ordermanager.service.TechTagService;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static plus.lgx.ordermanager.constant.SystemConstant.DELETED_STATUS;
 
@@ -27,6 +37,12 @@ import static plus.lgx.ordermanager.constant.SystemConstant.DELETED_STATUS;
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
 
+    @Resource
+    private OrderTagService orderTagService;
+
+    @Resource
+    private TechTagService techTagService;
+
     @Override
     public boolean del(Integer id) {
         return lambdaUpdate().eq(Order::getOrderId, id).set(Order::getOrderStatus, DELETED_STATUS).update();
@@ -36,7 +52,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Transactional
     public PageInfo<OrderVO> queryPage(int pageNum, int pageSize, QueryOrderParam param) {
         try (Page<Order> page = PageHelper.startPage(pageNum, pageSize)) {
-            return page.doSelectPageInfo(() -> {
+            PageInfo<Order> pageInfo = page.doSelectPageInfo(() -> {
                 var query = lambdaQuery()
                         .eq(Objects.nonNull(param.getOrderId()), Order::getOrderId, param.getOrderId())
                         .eq(Objects.nonNull(param.getCustomerId()), Order::getCustomerId, param.getCustomerId())
@@ -62,6 +78,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 }
                 query.list();
             });
+
+            List<Long> orderIds = pageInfo.getList().stream().map(Order::getOrderId).toList();
+            List<OrderTag> allMiddleTags = orderIds.isEmpty()
+                    ? Collections.emptyList()
+                    : orderTagService.lambdaQuery().in(OrderTag::getOrderId, orderIds).list();
+
+            List<Long> allTagIds = allMiddleTags.stream().map(OrderTag::getTagId).distinct().toList();
+            Map<Long, TechTag> allTechTags = allTagIds.isEmpty()
+                    ? Collections.emptyMap()
+                    : techTagService.lambdaQuery().in(TechTag::getTagId, allTagIds).list().stream()
+                    .collect(Collectors.toMap(TechTag::getTagId, x -> x));
+
+            Map<Long, List<String>> group = allMiddleTags.stream()
+                    .collect(Collectors.groupingBy(OrderTag::getOrderId,
+                            Collectors.mapping(tag -> allTechTags.get(tag.getTagId()).getTagName(),
+                                    Collectors.toList())));
+
+            List<OrderVO> list = pageInfo.getList().stream().map(order -> {
+                OrderVO orderVO = new OrderVO(order);
+                orderVO.setTags(group.get(order.getOrderId()));
+                return orderVO;
+            }).toList();
+
+            PageInfo<OrderVO> ret = new PageInfo<>();
+            BeanUtil.copyProperties(pageInfo, ret);
+            ret.setList(list);
+            return ret;
         }
     }
 }
