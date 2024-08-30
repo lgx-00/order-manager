@@ -6,9 +6,8 @@ spring:
     password: p@ssAdm7
 
 mybatis-plus:
-  mapper-locations: classpath:/mapper/*.xml
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 knife4j:
   enable: true    # 开启 knife4j，无需添加 @EnableKnife4j 注解
