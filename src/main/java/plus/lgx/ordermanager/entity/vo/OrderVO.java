@@ -21,6 +21,8 @@ public class OrderVO extends Order {
 
     private List<String> tags;
 
+    private List<Long> orderTag;
+
     public OrderVO(Order order) {
         BeanUtil.copyProperties(order, this);
     }

@@ -18,5 +18,9 @@ public interface OrderService extends IService<Order> {
 
     boolean del(Integer id);
 
+    void saveOrder(OrderVO order);
+
+    void updateOrder(OrderVO order);
+
     PageInfo<OrderVO> queryPage(int pageNum, int pageSize, QueryOrderParam param);
 }

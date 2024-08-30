@@ -2,4 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="plus.lgx.ordermanager.mapper.OrderMapper">
 
+    <!-- 条件查询订单 -->
+    <select id="queryByCondition" resultType="plus.lgx.ordermanager.entity.pojo.Order">
+        SELECT *
+        FROM `order`
+        WHERE TRUE
+            <if test="param.orderId != null">AND order_id = #{param.orderId}</if>
+            <if test="param.customerId != null">AND customer_id = #{param.customerId}</if>
+            <if test="param.orderTitle != null">AND order_title LIKE CONCAT('%', #{param.orderTitle}, '%')</if>
+            <if test="param.orderContent != null">AND order_content LIKE CONCAT('%', #{param.orderContent}, '%')</if>
+
+            <if test="param.orderBudgetMax != null">AND order_budget &lt;= #{param.orderBudgetMax}</if>
+            <if test="param.orderBudgetMin != null">AND order_budget >= #{param.orderBudgetMin}</if>
+
+            <if test="param.orderDeadlineMax != null">AND order_deadline &lt;= #{param.orderDeadlineMax}</if>
+            <if test="param.orderDeadlineMin != null">AND order_deadline >= #{param.orderDeadlineMin}</if>
+
+            <if test="param.orderCompleteMax != null">AND order_complete &lt;= #{param.orderCompleteMax}</if>
+            <if test="param.orderCompleteMin != null">AND order_complete >= #{param.orderCompleteMin}</if>
+
+            <if test="param.orderSumMax != null">AND order_sum &lt;= #{param.orderSumMax}</if>
+            <if test="param.orderSumMin != null">AND order_sum >= #{param.orderSumMin}</if>
+
+            <if test="param.orderStatus != null">AND order_status = #{param.orderStatus}</if>
+            <if test="param.orderStatus == null">AND order_status &lt;> 100</if>
+
+            <if test="param.orderTag != null and param.orderTag.size() > 0">
+            AND order_id IN
+            (
+                SELECT DISTINCT order_id FROM order_tag WHERE tag_id IN
+                <foreach collection="param.orderTag" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            )
+            </if>
+
+            <if test="param.orderSourceList != null and param.orderSourceList.size() > 0">
+            AND order_source IN
+            <foreach collection="param.orderSourceList" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+        ORDER BY order_id DESC
+    </select>
+
 </mapper>

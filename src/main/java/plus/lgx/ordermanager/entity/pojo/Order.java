@@ -4,14 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -45,17 +46,20 @@ public class Order implements Serializable {
      * 订单标题
      */
     @TableField("order_title")
+    @NotBlank(message = "订单标题不能为空")
     private String orderTitle;
 
     /**
      * 订单详情
      */
     @TableField("order_content")
+    @NotBlank(message = "订单详情不能为空")
     private String orderContent;
 
     /**
      * 订单创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("order_created_at")
     private LocalDateTime orderCreatedAt;
 
@@ -82,7 +86,7 @@ public class Order implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @TableField("order_deadline")
-    private LocalDateTime orderDeadline;
+    private LocalDate orderDeadline;
 
     /**
      * 订单预算 * 100

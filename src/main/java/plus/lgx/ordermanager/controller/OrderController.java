@@ -1,8 +1,8 @@
 package plus.lgx.ordermanager.controller;
 
-
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import plus.lgx.ordermanager.entity.vo.OrderVO;
 import plus.lgx.ordermanager.entity.vo.QueryOrderParam;
@@ -11,7 +11,6 @@ import plus.lgx.ordermanager.service.OrderService;
 import plus.lgx.ordermanager.utils.UserHolder;
 
 import static plus.lgx.ordermanager.constant.SystemConstant.DELETE_FAILED;
-import static plus.lgx.ordermanager.constant.SystemConstant.UPDATE_FAILED;
 
 /**
  * <p>
@@ -29,9 +28,12 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public R<Void> postOrder(@RequestBody OrderVO order) {
+    public R<Void> postOrder(@RequestBody @Valid OrderVO order) {
         order.setOrderCreatedBy(UserHolder.getUser().getUserId());
-        orderService.save(order);
+        // TODO 暂时设置一个用户
+        order.setCustomerId(1L);
+        System.out.println(order.getOrderPayment());
+        orderService.saveOrder(order);
         return R.ok();
     }
 
@@ -43,10 +45,9 @@ public class OrderController {
     }
 
     @PutMapping
-    public R<Void> putOrder(@RequestBody OrderVO order) {
-        return orderService.updateById(order)
-                ? R.ok()
-                : R.fail(UPDATE_FAILED);
+    public R<Void> putOrder(@RequestBody @Valid OrderVO order) {
+        orderService.updateOrder(order);
+        return R.ok();
     }
 
     @GetMapping

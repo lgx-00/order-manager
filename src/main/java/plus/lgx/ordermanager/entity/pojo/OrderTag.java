@@ -1,7 +1,9 @@
 package plus.lgx.ordermanager.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
@@ -17,6 +19,8 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("order_tag")
 public class OrderTag implements Serializable {
 

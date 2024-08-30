@@ -62,4 +62,9 @@ public class QueryOrderParam extends Order {
      */
     private List<Long> orderSourceList;
 
+    /**
+     * 订单技术标签
+     */
+    private List<Long> orderTag;
+
 }

@@ -1,6 +1,7 @@
 package plus.lgx.ordermanager.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -21,7 +22,6 @@ import plus.lgx.ordermanager.service.TechTagService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static plus.lgx.ordermanager.constant.SystemConstant.DELETED_STATUS;
@@ -50,34 +50,39 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional
+    public void saveOrder(OrderVO order) {
+        if (!save(order)) {
+            throw new RuntimeException();
+        }
+        saveOrderTags(order);
+    }
+
+    @Override
+    public void updateOrder(OrderVO order) {
+        if (!updateById(order)) {
+            throw new RuntimeException();
+        }
+        if (!orderTagService.lambdaUpdate().eq(OrderTag::getOrderId, order.getOrderId()).remove()) {
+            throw new RuntimeException();
+        }
+        saveOrderTags(order);
+    }
+
+    private void saveOrderTags(OrderVO order) {
+        Long orderId = order.getOrderId();
+        List<OrderTag> orderTagList = CollectionUtil.emptyIfNull(order.getOrderTag())
+                .stream().map(tagId -> new OrderTag(orderId, tagId)).toList();
+        if (!orderTagService.saveBatch(orderTagList)) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    @Transactional
     public PageInfo<OrderVO> queryPage(int pageNum, int pageSize, QueryOrderParam param) {
+
         try (Page<Order> page = PageHelper.startPage(pageNum, pageSize)) {
-            PageInfo<Order> pageInfo = page.doSelectPageInfo(() -> {
-                var query = lambdaQuery()
-                        .eq(Objects.nonNull(param.getOrderId()), Order::getOrderId, param.getOrderId())
-                        .eq(Objects.nonNull(param.getCustomerId()), Order::getCustomerId, param.getCustomerId())
-                        .like(Objects.nonNull(param.getOrderTitle()), Order::getOrderTitle, param.getOrderTitle())
-                        .like(Objects.nonNull(param.getOrderContent()), Order::getOrderContent, param.getOrderContent())
-
-                        .le(Objects.nonNull(param.getOrderBudgetMax()), Order::getOrderBudget, param.getOrderBudgetMax())
-                        .ge(Objects.nonNull(param.getOrderBudgetMin()), Order::getOrderBudget, param.getOrderBudgetMin())
-
-                        .le(Objects.nonNull(param.getOrderDeadlineMax()), Order::getOrderDeadline, param.getOrderDeadlineMax())
-                        .ge(Objects.nonNull(param.getOrderDeadlineMin()), Order::getOrderDeadline, param.getOrderDeadlineMin())
-
-                        .le(Objects.nonNull(param.getOrderCompleteMax()), Order::getOrderComplete, param.getOrderCompleteMax())
-                        .ge(Objects.nonNull(param.getOrderCompleteMin()), Order::getOrderComplete, param.getOrderCompleteMin())
-
-                        .le(Objects.nonNull(param.getOrderSumMax()), Order::getOrderSum, param.getOrderSumMax())
-                        .ge(Objects.nonNull(param.getOrderSumMin()), Order::getOrderSum, param.getOrderSumMin())
-                        .orderByDesc(Order::getOrderId);
-                if (Objects.nonNull(param.getOrderStatus())) {
-                    query.eq(Order::getOrderStatus, param.getOrderStatus());
-                } else {
-                    query.ne(Order::getOrderStatus, DELETED_STATUS);
-                }
-                query.list();
-            });
+            PageInfo<Order> pageInfo = page.doSelectPageInfo(() -> baseMapper.queryByCondition(param));
 
             List<Long> orderIds = pageInfo.getList().stream().map(Order::getOrderId).toList();
             List<OrderTag> allMiddleTags = orderIds.isEmpty()
@@ -90,14 +95,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     : techTagService.lambdaQuery().in(TechTag::getTagId, allTagIds).list().stream()
                     .collect(Collectors.toMap(TechTag::getTagId, x -> x));
 
-            Map<Long, List<String>> group = allMiddleTags.stream()
+            Map<Long, List<String>> nameGroup = allMiddleTags.stream()
                     .collect(Collectors.groupingBy(OrderTag::getOrderId,
                             Collectors.mapping(tag -> allTechTags.get(tag.getTagId()).getTagName(),
+                                    Collectors.toList())));
+            Map<Long, List<Long>> idGroup = allMiddleTags.stream()
+                    .collect(Collectors.groupingBy(OrderTag::getOrderId,
+                            Collectors.mapping(OrderTag::getTagId,
                                     Collectors.toList())));
 
             List<OrderVO> list = pageInfo.getList().stream().map(order -> {
                 OrderVO orderVO = new OrderVO(order);
-                orderVO.setTags(group.get(order.getOrderId()));
+                orderVO.setTags(nameGroup.get(order.getOrderId()));
+                orderVO.setOrderTag(idGroup.get(order.getOrderId()));
                 return orderVO;
             }).toList();
 
